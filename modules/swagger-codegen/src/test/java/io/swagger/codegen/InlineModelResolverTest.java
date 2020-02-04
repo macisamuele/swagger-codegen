@@ -35,12 +35,12 @@ public class InlineModelResolverTest {
 
         new InlineModelResolver().flatten(swagger);
 
-        ModelImpl user = (ModelImpl)swagger.getDefinitions().get("User");
+        ModelImpl user = (ModelImpl) swagger.getDefinitions().get("User");
 
         assertNotNull(user);
         assertTrue(user.getProperties().get("address") instanceof RefProperty);
 
-        ModelImpl address = (ModelImpl)swagger.getDefinitions().get("User_address");
+        ModelImpl address = (ModelImpl) swagger.getDefinitions().get("User_address");
         assertNotNull(address);
         assertNotNull(address.getProperties().get("city"));
         assertNotNull(address.getProperties().get("street"));
@@ -67,17 +67,17 @@ public class InlineModelResolverTest {
 
         new InlineModelResolver().flatten(swagger);
 
-        ModelImpl user = (ModelImpl)swagger.getDefinitions().get("User");
+        ModelImpl user = (ModelImpl) swagger.getDefinitions().get("User");
 
         assertNotNull(user);
         assertTrue(user.getProperties().get("address") instanceof RefProperty);
 
-        ModelImpl address = (ModelImpl)swagger.getDefinitions().get("UserAddressTitle");
+        ModelImpl address = (ModelImpl) swagger.getDefinitions().get("UserAddressTitle");
         assertNotNull(address);
         assertNotNull(address.getProperties().get("city"));
         assertNotNull(address.getProperties().get("street"));
-    }    
-    
+    }
+
     @Test
     public void resolveInlineModel2EqualInnerModels() {
         Swagger swagger = new Swagger();
@@ -96,7 +96,7 @@ public class InlineModelResolverTest {
                         .name("name")
                         .property("street", new StringProperty())
                         .property("city", new StringProperty())));
-        
+
         swagger.addDefinition("AnotherUser", new ModelImpl()
                 .name("user")
                 .description("a common user")
@@ -111,22 +111,22 @@ public class InlineModelResolverTest {
                         .description("description")
                         .name("name")
                         .property("street", new StringProperty())
-                        .property("city", new StringProperty())));        
+                        .property("city", new StringProperty())));
 
         new InlineModelResolver().flatten(swagger);
 
-        ModelImpl user = (ModelImpl)swagger.getDefinitions().get("User");
+        ModelImpl user = (ModelImpl) swagger.getDefinitions().get("User");
 
         assertNotNull(user);
         assertTrue(user.getProperties().get("address") instanceof RefProperty);
 
-        ModelImpl address = (ModelImpl)swagger.getDefinitions().get("UserAddressTitle");
+        ModelImpl address = (ModelImpl) swagger.getDefinitions().get("UserAddressTitle");
         assertNotNull(address);
         assertNotNull(address.getProperties().get("city"));
         assertNotNull(address.getProperties().get("street"));
-        ModelImpl duplicateAddress = (ModelImpl)swagger.getDefinitions().get("UserAddressTitle_0");
+        ModelImpl duplicateAddress = (ModelImpl) swagger.getDefinitions().get("UserAddressTitle_0");
         assertNull(duplicateAddress);
-    }        
+    }
 
     @Test
     public void resolveInlineModel2DifferentInnerModelsWIthSameTitle() {
@@ -146,7 +146,7 @@ public class InlineModelResolverTest {
                         .name("name")
                         .property("street", new StringProperty())
                         .property("city", new StringProperty())));
-        
+
         swagger.addDefinition("AnotherUser", new ModelImpl()
                 .name("AnotherUser")
                 .description("a common user")
@@ -162,27 +162,27 @@ public class InlineModelResolverTest {
                         .name("name")
                         .property("street", new StringProperty())
                         .property("city", new StringProperty())
-                .property("apartment", new StringProperty())));
+                        .property("apartment", new StringProperty())));
 
         new InlineModelResolver().flatten(swagger);
 
-        ModelImpl user = (ModelImpl)swagger.getDefinitions().get("User");
+        ModelImpl user = (ModelImpl) swagger.getDefinitions().get("User");
 
         assertNotNull(user);
         assertTrue(user.getProperties().get("address") instanceof RefProperty);
 
-        ModelImpl address = (ModelImpl)swagger.getDefinitions().get("UserAddressTitle");
+        ModelImpl address = (ModelImpl) swagger.getDefinitions().get("UserAddressTitle");
         assertNotNull(address);
         assertNotNull(address.getProperties().get("city"));
         assertNotNull(address.getProperties().get("street"));
-        ModelImpl duplicateAddress = (ModelImpl)swagger.getDefinitions().get("UserAddressTitle_1");
+        ModelImpl duplicateAddress = (ModelImpl) swagger.getDefinitions().get("UserAddressTitle_1");
         assertNotNull(duplicateAddress);
         assertNotNull(duplicateAddress.getProperties().get("city"));
         assertNotNull(duplicateAddress.getProperties().get("street"));
         assertNotNull(duplicateAddress.getProperties().get("apartment"));
-    }        
-    
-    
+    }
+
+
     @Test
     public void testInlineResponseModel() {
         Swagger swagger = new Swagger();
@@ -192,22 +192,22 @@ public class InlineModelResolverTest {
         ModelImpl responseSchemaBaz = new ModelImpl().type("object").property("name", new StringProperty());
         responseSchemaBaz.setVendorExtension("x-ext", "ext-prop");
         swagger.path("/foo/bar", new Path()
-            .get(new Operation()
-                    .response(200, new Response()
-                            .description("it works!")
-                            .responseSchema(responseSchema)
-                    )
-            )
-        )
-        .path("/foo/baz", new Path()
                 .get(new Operation()
                         .response(200, new Response()
-                                .vendorExtension("x-foo", "bar")
                                 .description("it works!")
-                                .responseSchema(responseSchemaBaz)
+                                .responseSchema(responseSchema)
                         )
                 )
-        );
+        )
+                .path("/foo/baz", new Path()
+                        .get(new Operation()
+                                .response(200, new Response()
+                                        .vendorExtension("x-foo", "bar")
+                                        .description("it works!")
+                                        .responseSchema(responseSchemaBaz)
+                                )
+                        )
+                );
         new InlineModelResolver().flatten(swagger);
 
         Map<String, Response> responses = swagger.getPaths().get("/foo/bar").getGet().getResponses();
@@ -217,15 +217,15 @@ public class InlineModelResolverTest {
         Property schema = response.getSchema();
         assertTrue(schema instanceof RefProperty);
 
-        ModelImpl model = (ModelImpl)swagger.getDefinitions().get("inline_response_200");
-        assertTrue(model.getProperties().size() == 1);
+        ModelImpl model = (ModelImpl) swagger.getDefinitions().get("inline_response_200");
+        assertEquals(model.getProperties().size(), 1);
         assertNotNull(model.getProperties().get("name"));
         assertTrue(model.getProperties().get("name") instanceof StringProperty);
         assertEquals(1, model.getVendorExtensions().size());
         assertEquals("ext-prop", model.getVendorExtensions().get("x-ext"));
     }
 
-    
+
     @Test
     public void testInlineResponseModelWithTitle() {
         Swagger swagger = new Swagger();
@@ -237,16 +237,16 @@ public class InlineModelResolverTest {
         ModelImpl responseSchemaBaz = new ModelImpl().type("object").property("name", new StringProperty());
 
         swagger.path("/foo/bar", new Path()
-            .get(new Operation()
-                    .response(200, new Response()
-                            .description("it works!")
-                            .responseSchema(responseSchema))))
-        .path("/foo/baz", new Path()
                 .get(new Operation()
                         .response(200, new Response()
-                                .vendorExtension("x-foo", "bar")
                                 .description("it works!")
-                                .responseSchema(responseSchemaBaz))));
+                                .responseSchema(responseSchema))))
+                .path("/foo/baz", new Path()
+                        .get(new Operation()
+                                .response(200, new Response()
+                                        .vendorExtension("x-foo", "bar")
+                                        .description("it works!")
+                                        .responseSchema(responseSchemaBaz))));
         new InlineModelResolver().flatten(swagger);
 
         Map<String, Response> responses = swagger.getPaths().get("/foo/bar").getGet().getResponses();
@@ -255,13 +255,13 @@ public class InlineModelResolverTest {
         assertNotNull(response);
         assertTrue(response.getSchema() instanceof RefProperty);
 
-        ModelImpl model = (ModelImpl)swagger.getDefinitions().get(responseTitle);
-        assertTrue(model.getProperties().size() == 1);
+        ModelImpl model = (ModelImpl) swagger.getDefinitions().get(responseTitle);
+        assertEquals(model.getProperties().size(), 1);
         assertNotNull(model.getProperties().get("name"));
         assertTrue(model.getProperties().get("name") instanceof StringProperty);
     }
-    
-    
+
+
     @Test
     public void resolveInlineArrayModelWithTitle() {
         Swagger swagger = new Swagger();
@@ -287,7 +287,7 @@ public class InlineModelResolverTest {
         assertNotNull(user);
         assertEquals("description", user.getDescription());
     }
-    
+
     @Test
     public void resolveInlineArrayModelWithoutTitle() {
         Swagger swagger = new Swagger();
@@ -311,10 +311,8 @@ public class InlineModelResolverTest {
         Model user = swagger.getDefinitions().get("User_inner");
         assertNotNull(user);
         assertEquals("description", user.getDescription());
-    }    
-    
-    
-    
+    }
+
 
     @Test
     public void resolveInlineBodyParameter() {
@@ -326,13 +324,13 @@ public class InlineModelResolverTest {
                                 .name("body")
                                 .schema(new ModelImpl()
                                         .property("address", new ObjectProperty()
-                                            .property("street", new StringProperty()))
+                                                .property("street", new StringProperty()))
                                         .property("name", new StringProperty())))));
 
         new InlineModelResolver().flatten(swagger);
 
         Operation operation = swagger.getPaths().get("/hello").getGet();
-        BodyParameter bp = (BodyParameter)operation.getParameters().get(0);
+        BodyParameter bp = (BodyParameter) operation.getParameters().get(0);
         assertTrue(bp.getSchema() instanceof RefModel);
 
         Model body = swagger.getDefinitions().get("body");
@@ -360,7 +358,7 @@ public class InlineModelResolverTest {
         new InlineModelResolver().flatten(swagger);
 
         Operation operation = swagger.getPaths().get("/hello").getGet();
-        BodyParameter bp = (BodyParameter)operation.getParameters().get(0);
+        BodyParameter bp = (BodyParameter) operation.getParameters().get(0);
         assertTrue(bp.getSchema() instanceof RefModel);
 
         Model body = swagger.getDefinitions().get("body");
@@ -380,30 +378,30 @@ public class InlineModelResolverTest {
         assertNotNull(addressImpl);
 
         Property streetProperty = addressImpl.getProperties().get("street");
-        assertTrue(streetProperty instanceof  StringProperty);
+        assertTrue(streetProperty instanceof StringProperty);
         assertTrue(streetProperty.getRequired());
     }
-    
+
     @Test
     public void resolveInlineBodyParameterWithTitle() {
         Swagger swagger = new Swagger();
 
         ModelImpl addressModelItem = new ModelImpl();
         String addressModelName = "DetailedAddress";
-    addressModelItem.setTitle(addressModelName);
-    swagger.path("/hello", new Path()
+        addressModelItem.setTitle(addressModelName);
+        swagger.path("/hello", new Path()
                 .get(new Operation()
                         .parameter(new BodyParameter()
                                 .name("body")
                                 .schema(addressModelItem
                                         .property("address", new ObjectProperty()
-                                            .property("street", new StringProperty()))
+                                                .property("street", new StringProperty()))
                                         .property("name", new StringProperty())))));
 
         new InlineModelResolver().flatten(swagger);
 
         Operation operation = swagger.getPaths().get("/hello").getGet();
-        BodyParameter bp = (BodyParameter)operation.getParameters().get(0);
+        BodyParameter bp = (BodyParameter) operation.getParameters().get(0);
         assertTrue(bp.getSchema() instanceof RefModel);
 
         Model body = swagger.getDefinitions().get(addressModelName);
@@ -411,7 +409,7 @@ public class InlineModelResolverTest {
 
         ModelImpl impl = (ModelImpl) body;
         assertNotNull(impl.getProperties().get("address"));
-    }    
+    }
 
     @Test
     public void notResolveNonModelBodyParameter() {
@@ -428,7 +426,7 @@ public class InlineModelResolverTest {
         new InlineModelResolver().flatten(swagger);
 
         Operation operation = swagger.getPaths().get("/hello").getGet();
-        BodyParameter bp = (BodyParameter)operation.getParameters().get(0);
+        BodyParameter bp = (BodyParameter) operation.getParameters().get(0);
         assertTrue(bp.getSchema() instanceof ModelImpl);
         ModelImpl m = (ModelImpl) bp.getSchema();
         assertEquals("string", m.getType());
@@ -445,8 +443,8 @@ public class InlineModelResolverTest {
                                 .name("body")
                                 .schema(new ArrayModel()
                                         .items(new ObjectProperty()
-                                            .property("address", new ObjectProperty()
-                                                .property("street", new StringProperty())))))));
+                                                .property("address", new ObjectProperty()
+                                                        .property("street", new StringProperty())))))));
 
         new InlineModelResolver().flatten(swagger);
 
@@ -516,7 +514,7 @@ public class InlineModelResolverTest {
         ArrayProperty ap = (ArrayProperty) responseProperty;
         assertEquals(1, ap.getVendorExtensions().size());
         assertEquals("ext-prop", ap.getVendorExtensions().get("x-ext"));
-        
+
         Property p = ap.getItems();
 
         assertNotNull(p);
@@ -541,14 +539,14 @@ public class InlineModelResolverTest {
         Swagger swagger = new Swagger();
 
         swagger.path("/foo/baz", new Path()
-            .get(new Operation()
-                .response(200, new Response()
-                    .vendorExtension("x-foo", "bar")
-                    .description("it works!")
-                    .schema(new ArrayProperty()
-                        .items(new ObjectProperty()
-                            .title("FooBar")
-                            .property("name", new StringProperty()))))));
+                .get(new Operation()
+                        .response(200, new Response()
+                                .vendorExtension("x-foo", "bar")
+                                .description("it works!")
+                                .schema(new ArrayProperty()
+                                        .items(new ObjectProperty()
+                                                .title("FooBar")
+                                                .property("name", new StringProperty()))))));
 
         new InlineModelResolver().flatten(swagger);
 
@@ -568,7 +566,7 @@ public class InlineModelResolverTest {
 
         RefProperty rp = (RefProperty) p;
         assertEquals(rp.getType(), "ref");
-        assertEquals(rp.get$ref(), "#/definitions/"+ "FooBar");
+        assertEquals(rp.get$ref(), "#/definitions/" + "FooBar");
         assertEquals(rp.getSimpleRef(), "FooBar");
 
         Model inline = swagger.getDefinitions().get("FooBar");
@@ -578,7 +576,7 @@ public class InlineModelResolverTest {
         assertNotNull(impl.getProperties().get("name"));
         assertTrue(impl.getProperties().get("name") instanceof StringProperty);
     }
-    
+
     @Test
     public void testInlineMapResponse() {
         Swagger swagger = new Swagger();
@@ -600,7 +598,7 @@ public class InlineModelResolverTest {
 
         Property property = response.getSchema();
         assertTrue(property instanceof MapProperty);
-        assertTrue(swagger.getDefinitions().size() == 0);
+        assertEquals(swagger.getDefinitions().size(), 0);
         assertEquals(1, property.getVendorExtensions().size());
         assertEquals("ext-prop", property.getVendorExtensions().get("x-ext"));
     }
@@ -627,7 +625,7 @@ public class InlineModelResolverTest {
         assertTrue(property instanceof MapProperty);
         assertEquals(1, property.getVendorExtensions().size());
         assertEquals("ext-prop", property.getVendorExtensions().get("x-ext"));
-        assertTrue(swagger.getDefinitions().size() == 1);
+        assertEquals(swagger.getDefinitions().size(), 1);
 
         Model inline = swagger.getDefinitions().get("inline_response_200");
         assertTrue(inline instanceof ModelImpl);
@@ -680,8 +678,8 @@ public class InlineModelResolverTest {
         swagger.path("/foo/baz", new Path()
                 .post(new Operation()
                         .parameter(new BodyParameter()
-                            .name("myBody")
-                            .schema(new RefModel("User")))));
+                                .name("myBody")
+                                .schema(new RefModel("User")))));
 
         swagger.addDefinition("User", user);
 
@@ -703,7 +701,7 @@ public class InlineModelResolverTest {
         new InlineModelResolver().flatten(swagger);
 
         Operation operation = swagger.getPaths().get("/hello").getGet();
-        BodyParameter bp = (BodyParameter)operation.getParameters().get(0);
+        BodyParameter bp = (BodyParameter) operation.getParameters().get(0);
         assertTrue(bp.getSchema() instanceof ModelImpl);
         ModelImpl m = (ModelImpl) bp.getSchema();
         assertNull(m.getType());
@@ -723,7 +721,7 @@ public class InlineModelResolverTest {
         new InlineModelResolver().flatten(swagger);
 
         Operation operation = swagger.getPaths().get("/hello").getGet();
-        BodyParameter bp = (BodyParameter)operation.getParameters().get(0);
+        BodyParameter bp = (BodyParameter) operation.getParameters().get(0);
         assertTrue(bp.getSchema() instanceof RefModel);
 
         Model body = swagger.getDefinitions().get("body");
@@ -775,7 +773,7 @@ public class InlineModelResolverTest {
                                 .name("body")
                                 .schema(new ArrayModel()
                                         .items(new ObjectProperty()
-                                            .property("arbitrary", new ObjectProperty()))))));
+                                                .property("arbitrary", new ObjectProperty()))))));
 
         new InlineModelResolver().flatten(swagger);
 
@@ -811,10 +809,10 @@ public class InlineModelResolverTest {
         Swagger swagger = new Swagger();
 
         swagger.path("/foo/bar", new Path()
-            .get(new Operation()
-                    .response(200, new Response()
-                            .description("it works!")
-                            .schema(new ObjectProperty()))));
+                .get(new Operation()
+                        .response(200, new Response()
+                                .description("it works!")
+                                .schema(new ObjectProperty()))));
         new InlineModelResolver().flatten(swagger);
 
         Map<String, Response> responses = swagger.getPaths().get("/foo/bar").getGet().getResponses();
@@ -859,7 +857,7 @@ public class InlineModelResolverTest {
                                 .description("it works!")
                                 .schema(new ArrayProperty()
                                         .items(new ObjectProperty()
-                                            .property("arbitrary", new ObjectProperty()))))));
+                                                .property("arbitrary", new ObjectProperty()))))));
 
         new InlineModelResolver().flatten(swagger);
 
@@ -908,7 +906,7 @@ public class InlineModelResolverTest {
 
         Property property = response.getSchema();
         assertTrue(property instanceof MapProperty);
-        assertTrue(swagger.getDefinitions().size() == 0);
+        assertEquals(swagger.getDefinitions().size(), 0);
         Property inlineProp = ((MapProperty) property).getAdditionalProperties();
         assertTrue(inlineProp instanceof ObjectProperty);
         ObjectProperty op = (ObjectProperty) inlineProp;
@@ -934,7 +932,7 @@ public class InlineModelResolverTest {
 
         new InlineModelResolver().flatten(swagger);
 
-        ModelImpl user = (ModelImpl)swagger.getDefinitions().get("User");
+        ModelImpl user = (ModelImpl) swagger.getDefinitions().get("User");
         assertNotNull(user);
         Property inlineProp = user.getProperties().get("arbitrary");
         assertTrue(inlineProp instanceof ObjectProperty);
@@ -964,14 +962,14 @@ public class InlineModelResolverTest {
         Property inner = am.getItems();
         assertTrue(inner instanceof RefProperty);
 
-        ModelImpl userInner = (ModelImpl)swagger.getDefinitions().get("User_inner");
+        ModelImpl userInner = (ModelImpl) swagger.getDefinitions().get("User_inner");
         assertNotNull(userInner);
         Property inlineProp = userInner.getProperties().get("arbitrary");
         assertTrue(inlineProp instanceof ObjectProperty);
         ObjectProperty op = (ObjectProperty) inlineProp;
         assertNull(op.getProperties());
     }
-    
+
     @Test
     public void testArbitraryObjectModelWithArrayInlineWithTitle() {
         Swagger swagger = new Swagger();
@@ -995,7 +993,7 @@ public class InlineModelResolverTest {
         Property inner = am.getItems();
         assertTrue(inner instanceof RefProperty);
 
-        ModelImpl userInner = (ModelImpl)swagger.getDefinitions().get("InnerUserTitle");
+        ModelImpl userInner = (ModelImpl) swagger.getDefinitions().get("InnerUserTitle");
         assertNotNull(userInner);
         Property inlineProp = userInner.getProperties().get("arbitrary");
         assertTrue(inlineProp instanceof ObjectProperty);
@@ -1004,7 +1002,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void testEmptyExampleOnStrinngTypeModels() {
+    public void testEmptyExampleOnStringTypeModels() {
         Swagger swagger = new Swagger();
 
         RefProperty refProperty = new RefProperty();
