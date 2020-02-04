@@ -69,11 +69,11 @@ public class InlineModelResolver {
                                                 Model innerModel = modelFromProperty(op, modelName);
                                                 String existing = matchGenerated(innerModel);
                                                 if (existing != null) {
-                                                    RefProperty refProperty = new RefProperty(existing);
+                                                    RefProperty refProperty = makeRefProperty(existing, inner);
                                                     refProperty.setRequired(op.getRequired());
                                                     am.setItems(refProperty);
                                                 } else {
-                                                    RefProperty refProperty = new RefProperty(modelName);
+                                                    RefProperty refProperty = makeRefProperty(modelName, inner);
                                                     refProperty.setRequired(op.getRequired());
                                                     am.setItems(refProperty);
                                                     addGenerated(modelName, innerModel);
@@ -150,12 +150,12 @@ public class InlineModelResolver {
                                             Model innerModel = modelFromProperty(op, modelName);
                                             String existing = matchGenerated(innerModel);
                                             if (existing != null) {
-                                                RefProperty refProperty = new RefProperty(existing);
+                                                RefProperty refProperty = makeRefProperty(existing, innerProperty);
                                                 refProperty.setRequired(op.getRequired());
                                                 mp.setAdditionalProperties(refProperty);
                                                 response.setResponseSchema(new PropertyModelConverter().propertyToModel(mp));
                                             } else {
-                                                RefProperty refProperty = new RefProperty(modelName);
+                                                RefProperty refProperty = makeRefProperty(modelName, innerProperty);
                                                 refProperty.setRequired(op.getRequired());
                                                 mp.setAdditionalProperties(refProperty);
                                                 response.setResponseSchema(new PropertyModelConverter().propertyToModel(mp));
@@ -195,11 +195,11 @@ public class InlineModelResolver {
                             if (existing == null) {
                                 swagger.addDefinition(innerModelName, innerModel);
                                 addGenerated(innerModelName, innerModel);
-                                RefProperty refProperty = new RefProperty(innerModelName);
+                                RefProperty refProperty = makeRefProperty(innerModelName, inner);
                                 refProperty.setRequired(op.getRequired());
                                 m.setItems(refProperty);
                             } else {
-                                RefProperty refProperty = new RefProperty(existing);
+                                RefProperty refProperty = makeRefProperty(existing, inner);
                                 refProperty.setRequired(op.getRequired());
                                 m.setItems(refProperty);
                             }
@@ -296,11 +296,11 @@ public class InlineModelResolver {
                 String existing = matchGenerated(model);
 
                 if (existing != null) {
-                    RefProperty refProperty = new RefProperty(existing);
+                    RefProperty refProperty = this.makeRefProperty(existing, property);
                     refProperty.setRequired(op.getRequired());
                     propsToUpdate.put(key, refProperty);
                 } else {
-                    RefProperty refProperty = new RefProperty(modelName);
+                    RefProperty refProperty = this.makeRefProperty(modelName, property);
                     refProperty.setRequired(op.getRequired());
                     propsToUpdate.put(key, refProperty);
                     modelsToAdd.put(modelName, model);
@@ -319,11 +319,11 @@ public class InlineModelResolver {
                         Model innerModel = modelFromProperty(op, modelName);
                         String existing = matchGenerated(innerModel);
                         if (existing != null) {
-                            RefProperty refProperty = new RefProperty(existing);
+                            Property refProperty = this.makeRefProperty(existing, property);
                             refProperty.setRequired(op.getRequired());
                             ap.setItems(refProperty);
                         } else {
-                            RefProperty refProperty = new RefProperty(modelName);
+                            Property refProperty = this.makeRefProperty(modelName, property);
                             refProperty.setRequired(op.getRequired());
                             ap.setItems(refProperty);
                             addGenerated(modelName, innerModel);
@@ -343,11 +343,11 @@ public class InlineModelResolver {
                         Model innerModel = modelFromProperty(op, modelName);
                         String existing = matchGenerated(innerModel);
                         if (existing != null) {
-                            RefProperty refProperty = new RefProperty(existing);
+                            RefProperty refProperty = makeRefProperty(existing, inner);
                             refProperty.setRequired(op.getRequired());
                             mp.setAdditionalProperties(refProperty);
                         } else {
-                            RefProperty refProperty = new RefProperty(modelName);
+                            RefProperty refProperty = makeRefProperty(modelName, inner);
                             refProperty.setRequired(op.getRequired());
                             mp.setAdditionalProperties(refProperty);
                             addGenerated(modelName, innerModel);
@@ -384,12 +384,6 @@ public class InlineModelResolver {
             model.setDescription(description);
             model.setExample(example);
             model.setItems(object.getItems());
-            if (object.getVendorExtensions() != null) {
-                for (String key : object.getVendorExtensions().keySet()) {
-                    model.setVendorExtension(key, object.getVendorExtensions().get(key));
-                }
-            }
-
             return model;
         }
 
@@ -442,11 +436,6 @@ public class InlineModelResolver {
         model.setDescription(description);
         model.setExample(example);
         model.setItems(object.getAdditionalProperties());
-        if (object.getVendorExtensions() != null) {
-            for (String key : object.getVendorExtensions().keySet()) {
-                model.setVendorExtension(key, object.getVendorExtensions().get(key));
-            }
-        }
 
         return model;
     }
@@ -456,9 +445,9 @@ public class InlineModelResolver {
      *
      * @param ref new property name
      * @param property Property
-     * @return {@link Property} A constructed Swagger property
+     * @return {@link RefProperty} A constructed Swagger property
      */
-    public Property makeRefProperty(String ref, Property property) {
+    public RefProperty makeRefProperty(String ref, Property property) {
         RefProperty newProperty = new RefProperty(ref);
         this.copyVendorExtensions(property, newProperty);
         return newProperty;
@@ -476,13 +465,4 @@ public class InlineModelResolver {
             target.setVendorExtension(extName, vendorExtensions.get(extName));
         }
     }
-
-    public boolean isSkipMatches() {
-        return skipMatches;
-    }
-
-    public void setSkipMatches(boolean skipMatches) {
-        this.skipMatches = skipMatches;
-    }
-
 }
