@@ -16,7 +16,7 @@ import static org.testng.AssertJUnit.*;
 @SuppressWarnings("static-method")
 public class InlineModelResolverTest {
     @Test
-    public void resolveInlineModelTestWithoutTitle() throws Exception {
+    public void resolveInlineModelTestWithoutTitle() {
         Swagger swagger = new Swagger();
 
         swagger.addDefinition("User", new ModelImpl()
@@ -47,7 +47,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void resolveInlineModelTestWithTitle() throws Exception {
+    public void resolveInlineModelTestWithTitle() {
         Swagger swagger = new Swagger();
 
         swagger.addDefinition("User", new ModelImpl()
@@ -79,7 +79,7 @@ public class InlineModelResolverTest {
     }    
     
     @Test
-    public void resolveInlineModel2EqualInnerModels() throws Exception {
+    public void resolveInlineModel2EqualInnerModels() {
         Swagger swagger = new Swagger();
 
         swagger.addDefinition("User", new ModelImpl()
@@ -129,7 +129,7 @@ public class InlineModelResolverTest {
     }        
 
     @Test
-    public void resolveInlineModel2DifferentInnerModelsWIthSameTitle() throws Exception {
+    public void resolveInlineModel2DifferentInnerModelsWIthSameTitle() {
         Swagger swagger = new Swagger();
 
         swagger.addDefinition("User", new ModelImpl()
@@ -184,7 +184,7 @@ public class InlineModelResolverTest {
     
     
     @Test
-    public void testInlineResponseModel() throws Exception {
+    public void testInlineResponseModel() {
         Swagger swagger = new Swagger();
 
         ModelImpl responseSchema = new ModelImpl().type("object").property("name", new StringProperty());
@@ -227,7 +227,7 @@ public class InlineModelResolverTest {
 
     
     @Test
-    public void testInlineResponseModelWithTitle() throws Exception {
+    public void testInlineResponseModelWithTitle() {
         Swagger swagger = new Swagger();
 
 
@@ -263,7 +263,7 @@ public class InlineModelResolverTest {
     
     
     @Test
-    public void resolveInlineArrayModelWithTitle() throws Exception {
+    public void resolveInlineArrayModelWithTitle() {
         Swagger swagger = new Swagger();
 
         swagger.addDefinition("User", new ArrayModel()
@@ -289,7 +289,7 @@ public class InlineModelResolverTest {
     }
     
     @Test
-    public void resolveInlineArrayModelWithoutTitle() throws Exception {
+    public void resolveInlineArrayModelWithoutTitle() {
         Swagger swagger = new Swagger();
 
         swagger.addDefinition("User", new ArrayModel()
@@ -317,7 +317,7 @@ public class InlineModelResolverTest {
     
 
     @Test
-    public void resolveInlineBodyParameter() throws Exception {
+    public void resolveInlineBodyParameter() {
         Swagger swagger = new Swagger();
 
         swagger.path("/hello", new Path()
@@ -343,7 +343,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void resolveInlineBodyParameterWithRequired() throws Exception {
+    public void resolveInlineBodyParameterWithRequired() {
         Swagger swagger = new Swagger();
 
         swagger.path("/hello", new Path()
@@ -385,7 +385,7 @@ public class InlineModelResolverTest {
     }
     
     @Test
-    public void resolveInlineBodyParameterWithTitle() throws Exception {
+    public void resolveInlineBodyParameterWithTitle() {
         Swagger swagger = new Swagger();
 
         ModelImpl addressModelItem = new ModelImpl();
@@ -414,7 +414,7 @@ public class InlineModelResolverTest {
     }    
 
     @Test
-    public void notResolveNonModelBodyParameter() throws Exception {
+    public void notResolveNonModelBodyParameter() {
         Swagger swagger = new Swagger();
 
         swagger.path("/hello", new Path()
@@ -436,7 +436,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void resolveInlineArrayBodyParameter() throws Exception {
+    public void resolveInlineArrayBodyParameter() {
         Swagger swagger = new Swagger();
 
         swagger.path("/hello", new Path()
@@ -487,7 +487,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void resolveInlineArrayResponse() throws Exception {
+    public void resolveInlineArrayResponse() {
         Swagger swagger = new Swagger();
 
         ArrayProperty schema = new ArrayProperty()
@@ -537,7 +537,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void resolveInlineArrayResponseWithTitle() throws Exception {
+    public void resolveInlineArrayResponseWithTitle() {
         Swagger swagger = new Swagger();
 
         swagger.path("/foo/baz", new Path()
@@ -580,7 +580,7 @@ public class InlineModelResolverTest {
     }
     
     @Test
-    public void testInlineMapResponse() throws Exception {
+    public void testInlineMapResponse() {
         Swagger swagger = new Swagger();
 
         MapProperty schema = new MapProperty();
@@ -606,7 +606,7 @@ public class InlineModelResolverTest {
     }
 
     @Test
-    public void testInlineMapResponseWithObjectProperty() throws Exception {
+    public void testInlineMapResponseWithObjectProperty() {
         Swagger swagger = new Swagger();
 
         MapProperty schema = new MapProperty();
